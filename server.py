@@ -1,16 +1,20 @@
 try:
     import json
     from datetime import datetime, timedelta
-
+    import os
     from flask import Flask, render_template
     from flask_cors import CORS
 
     from maxiGauge import MaxiGaugeLogger
+    from dotenv import load_dotenv
+
+    load_dotenv()
+    serial_port = os.getenv('COM_PORT', None)
 
     app = Flask(__name__)
     CORS(app)
 
-    mgl = MaxiGaugeLogger()
+    mgl = MaxiGaugeLogger(serial_port=serial_port)
     mgl.start()
 
 

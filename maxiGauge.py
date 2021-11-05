@@ -31,8 +31,10 @@ from datetime import datetime, timedelta
 from time import sleep
 
 import serial
+from dotenv import load_dotenv
 
-OUT_DIR = "Z:/Experiments/SurfTOF/Measurements/rawData/pressure/"
+load_dotenv()
+OUT_DIR = os.getenv('LOGGING_FOLDER')
 LOG_FILE_EVERY = 15
 LOG_HISTORY_EVERY = 2
 HISTORY_HOURS = 168
@@ -40,9 +42,26 @@ GET_DATA_FROM_DEVICE_EVERY = 0.4
 
 
 class MaxiGaugeLogger(threading.Thread):
-    def __init__(self):
+    def __init__(self, serial_port=None):
         super().__init__()
-        self.mg = MaxiGauge(serial_port="COM3")
+
+        if serial_port is None:
+            for i in range(1, 50):
+                if serial_port:
+                    break
+                try:
+                    self.mg = MaxiGauge(serial_port=f"COM{i}")
+                    labels = self.mg.send('CID', 1)[0]
+                    if "," in labels:
+                        serial_port = f"COM{i}"
+                        print()
+                        print(f"Found matching COM port: {serial_port}")
+                        print()
+                except Exception as e:
+                    print(e)
+        else:
+            self.mg = MaxiGauge(serial_port=serial_port)
+
         self.last_date = datetime.now().date()
         self.output_file = open(f"{OUT_DIR}{self.last_date.strftime('%Y-%m-%d')}.txt", 'a')
         self.runner = 0
@@ -51,7 +70,7 @@ class MaxiGaugeLogger(threading.Thread):
         try:
             self.labels = [v.strip() for v in self.mg.send('CID', 1)[0].split(',')]
         except Exception as e:
-            print('class MaxiGaugeLogger',e)
+            print('class MaxiGaugeLogger', e)
             self.labels = [f"Sensor {i}" for i in range(1, 7)]
 
     def run(self):
