@@ -4,7 +4,8 @@
 pip -r requirements.txt
 
 ### Logger Path
-Change the path in .env file (see .env.example)
+Copy .env.example to .env
+Change the path in .env file
 
 ### Troubles
 If it does not work, provide a "COM_PORT" in .env

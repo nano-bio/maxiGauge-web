@@ -10,8 +10,9 @@ try:
 
     load_dotenv()
     serial_port = os.getenv('COM_PORT', None)
+    server_port = os.getenv('SERVER_PORT', 80)
 
-    app = Flask(__name__)
+    app = Flask(__name__, por)
     CORS(app)
 
     mgl = MaxiGaugeLogger(serial_port=serial_port)
@@ -52,7 +53,7 @@ try:
 
 
     if __name__ == '__main__':
-        app.run(debug=False, host='0.0.0.0', port=80)
+        app.run(debug=False, host='0.0.0.0', port=server_port)
 
 except Exception as e:
     print(e)

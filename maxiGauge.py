@@ -30,11 +30,14 @@ import threading
 from datetime import datetime, timedelta
 from time import sleep
 
+import dateutil.parser
 import serial
 from dotenv import load_dotenv
 
 load_dotenv()
-OUT_DIR = os.getenv('LOGGING_FOLDER')
+OUT_DIR = os.getenv('LOGGING_FOLDER', None)
+if OUT_DIR is None:
+    print("Please specify LOGGING_FOLDER (see readme)")
 LOG_FILE_EVERY = 15
 LOG_HISTORY_EVERY = 2
 HISTORY_HOURS = 168
@@ -67,6 +70,23 @@ class MaxiGaugeLogger(threading.Thread):
         self.runner = 0
         self.values = []
         self.history = []
+
+        try:
+            # load history from file
+            with open(f"{OUT_DIR}{self.last_date.strftime('%Y-%m-%d')}.txt", 'r') as f:
+                for row in f.readlines():
+                    cols = row.split('\t')
+                    self.history.append([
+                        dateutil.parser.isoparse(cols[0]),
+                        float(cols[1]),
+                        float(cols[2]),
+                        float(cols[3]),
+                        float(cols[4]),
+                        float(cols[5]),
+                        float(cols[6])])
+        except Exception as e:
+            print("History not found", e)
+
         try:
             self.labels = [v.strip() for v in self.mg.send('CID', 1)[0].split(',')]
         except Exception as e:
