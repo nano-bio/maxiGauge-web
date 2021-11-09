@@ -95,32 +95,40 @@ class MaxiGaugeLogger(threading.Thread):
 
     def run(self):
         while True:
-            self.runner += 1
-            now = datetime.now()
-            if now.date() > self.last_date:
-                self.new_file(now.date())
-            self.last_date = now.date()
-            pressures = self.mg.pressures()
-            err = 0
-            for p in pressures:
-                if p.status != 0:
-                    err += 1
-                    print("Error while reading:", p)
-            if err < 6:
-                self.values = [now] + [p.pressure for p in pressures]
-                out_string = "\t".join(
-                    [now.replace(microsecond=0).isoformat()] + [f"{p.pressure:.3e}" for p in pressures]
-                )
-                if self.runner % LOG_FILE_EVERY == 0:
-                    self.output_file.write(f"{out_string}\n")
-                if self.runner % LOG_HISTORY_EVERY == 0:
-                    self.history.append(self.values)
-                    while self.history[0][0] < now - timedelta(hours=HISTORY_HOURS):
-                        self.history.pop(0)
-                if self.runner % (LOG_FILE_EVERY * 5) == 0:
-                    self.output_file.flush()
-                    os.fsync(self.output_file.fileno())
-            sleep(GET_DATA_FROM_DEVICE_EVERY)
+            try:
+                self.runner += 1
+                now = datetime.now()
+                if now.date() > self.last_date:
+                    self.new_file(now.date())
+                self.last_date = now.date()
+                pressures = self.mg.pressures()
+                err = 0
+                for p in pressures:
+                    if p.status != 0:
+                        err += 1
+                        print("Error while reading:", p)
+                if err < 6:
+                    self.values = [now] + [p.pressure for p in pressures]
+                    out_string = "\t".join(
+                        [now.replace(microsecond=0).isoformat()] + [f"{p.pressure:.3e}" for p in pressures]
+                    )
+                    if self.runner % LOG_FILE_EVERY == 0:
+                        self.output_file.write(f"{out_string}\n")
+                    if self.runner % LOG_HISTORY_EVERY == 0:
+                        self.history.append(self.values)
+                        while self.history[0][0] < now - timedelta(hours=HISTORY_HOURS):
+                            self.history.pop(0)
+                    if self.runner % (LOG_FILE_EVERY * 5) == 0:
+                        self.output_file.flush()
+                        os.fsync(self.output_file.fileno())
+                sleep(GET_DATA_FROM_DEVICE_EVERY)
+
+            except Exception as e:
+                try:
+                    with open('error.log', 'a') as f:
+                        f.write(f"{datetime.now()}: {e}\n\n")
+                except:
+                    pass
 
     def new_file(self, date):
         self.close_file()

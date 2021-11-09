@@ -10,9 +10,9 @@ try:
 
     load_dotenv()
     serial_port = os.getenv('COM_PORT', None)
-    server_port = os.getenv('SERVER_PORT', 80)
+    server_port = int(os.getenv('SERVER_PORT', 80))
 
-    app = Flask(__name__, por)
+    app = Flask(__name__)
     CORS(app)
 
     mgl = MaxiGaugeLogger(serial_port=serial_port)
