@@ -56,5 +56,5 @@ try:
         app.run(debug=False, host='0.0.0.0', port=server_port)
 
 except Exception as e:
-    print(e)
+    print("Error:", e)
     input()

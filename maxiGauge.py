@@ -50,6 +50,8 @@ class MaxiGaugeLogger(threading.Thread):
 
         if serial_port is None:
             for i in range(1, 50):
+                print("No port was given. Try auto detect:")
+                print(f"Trying to connect to COM{i}...")
                 if serial_port:
                     break
                 try:
@@ -62,6 +64,8 @@ class MaxiGaugeLogger(threading.Thread):
                         print()
                 except Exception as e:
                     print(e)
+            if serial_port is None:  # when still nothing was found
+                raise Exception("No valid Device found!")
         else:
             self.mg = MaxiGauge(serial_port=serial_port)
 
@@ -192,7 +196,9 @@ class MaxiGauge(object):
 
     def read(self):
         data = ""
-        while True:
+        max_tries = 100
+        while max_tries > 0:
+            max_tries -= 1
             x = self.connection.read().decode()
             self.debug_message(x)
             data += x
