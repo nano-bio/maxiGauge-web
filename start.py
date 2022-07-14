@@ -11,6 +11,7 @@ try:
     load_dotenv()
     serial_port = os.getenv('COM_PORT', None)
     server_port = int(os.getenv('SERVER_PORT', 80))
+    CHART_LINE_WIDTH = os.getenv('CHART_LINE_WIDTH', 1)
 
     app = Flask(__name__)
     CORS(app)
@@ -22,7 +23,7 @@ try:
     @app.route('/')
     def index():
         if mgl.is_alive():
-            return render_template('index.html', labels=mgl.labels)
+            return render_template('index.html', labels=mgl.labels, chart_line_width=CHART_LINE_WIDTH)
         else:
             return "Logger died!"
 
