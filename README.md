@@ -7,13 +7,14 @@ pip install -r requirements.txt
 ```
 
 
-### Set parameters to your environment
+### Settings
 
 Copy file `.env.example` to `.env` and change the variables in `.env` to your needs.
 
 - `LOGGING_FOLDER`: Where the daily log files are saved
 - `SERVER_PORT`: Leave at `80` (default) or change to a port which is not in use.
-- `COM_PORT`: If you know the COM port, set it (`COM_PORT=COM3`)
+- `COM_PORT`: If you know the COM port, set it (e.g. `COM_PORT=COM3`)
+- `CHART_LINE_WIDTH`: If you want to have thicker lines within the viewer
 
 
 ### Run
