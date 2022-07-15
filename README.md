@@ -18,11 +18,12 @@ Copy file `.env.example` to `.env` and change the variables in `.env` to your ne
 
 
 ### Run
+- Windows: doubleclick on `start.py`
+- Linux: In Terminal `python3 start.py`
 
-Run start.py (just doubleclick). Open a browser and navigate to http://localhost
-or http://localhost:8000 (if you do not use port 80 but port 8000)
-or http://your-ip-adress-or-hostname (if you want to connect from the office)
-
+### Access
+- http://localhost:SERVER_PORT (e.g. http://localhost:8000 )
+- http://your-ip-adress-or-hostname:SERVER_PORT (e.g. http://138.232.74.165:8000 )
 
 ### Troubles?
 - The software tries to find the right COM port. If it does not work, provide a `COM_PORT` in the
