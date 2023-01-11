@@ -51,7 +51,7 @@
                 <div class="card active">
                     <div class="card-body" data-field-id="{{ loop.index0 }}">
                         {{ label }}:
-                        <span id="value-{{ label | replace(' ', '' }}"></span>
+                        <span id="value-{{ label | replace(' ', '') }}"></span>
                     </div>
                 </div>
             </div>
@@ -150,7 +150,7 @@
           data.push([new Date(elem[0]), elem[1], elem[2], elem[3], elem[4], elem[5], elem[6]])
 
           {% for label in labels %}
-            $('#value-{{ label | replace(' ', '' }}').html(elem[{{ loop.index }}].toExponential(2))
+            $('#value-{{ label | replace(' ', '') }}').html(elem[{{ loop.index }}].toExponential(2))
           {% endfor %}
 
           const ind = data.findIndex(element => new Date(element[0]).addMinutes($('#lastHours').val()) > data[data.length - 1][0]);
