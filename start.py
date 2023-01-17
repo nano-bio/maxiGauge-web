@@ -1,4 +1,5 @@
 try:
+    import webbrowser
     import json
     from datetime import datetime, timedelta
     import os
@@ -54,6 +55,11 @@ try:
 
 
     if __name__ == '__main__':
+        try:
+            webbrowser.open(f'http://localhost:{server_port}', new=1)
+        except Exception as e:
+            print(e)
+
         app.run(debug=False, host='0.0.0.0', port=server_port)
 
 except Exception as e:
